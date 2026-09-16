@@ -7,5 +7,6 @@ import { env } from '$env/dynamic/public';
  */
 export const supabase = createBrowserClient(
 	env.PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-	env.PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+	env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 );
+

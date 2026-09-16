@@ -6,6 +6,13 @@ import { supabase } from '$lib/supabaseClient';
  */
 export const passkeyAuth = {
 	/**
+	 * Check if the app is running with placeholder DB keys
+	 */
+	isDemoMode: () => {
+		return supabase.supabaseUrl && supabase.supabaseUrl.includes('placeholder');
+	},
+
+	/**
 	 * Enroll a new Passkey for the currently authenticated user.
 	 * (Used to attach a passkey to an existing session or during a multi-step signup).
 	 * 
@@ -13,16 +20,23 @@ export const passkeyAuth = {
 	 */
 	enrollPasskey: async () => {
 		try {
+			console.log('[Passkey] Enrolling passkey with Supabase URL:', supabase.supabaseUrl);
 			// Initiates the WebAuthn enrollment process in the browser
 			const { data, error } = await supabase.auth.mfa.enroll({
 				factorType: 'webauthn'
 			});
             
-			if (error) throw error;
+			if (error) {
+				console.error('[Passkey] MFA enroll error:', error);
+				throw error;
+			}
             
 			// The challenge is automatically handled by the browser's WebAuthn API
 			const challenge = await supabase.auth.mfa.challenge({ factorId: data.id });
-			if (challenge.error) throw challenge.error;
+			if (challenge.error) {
+				console.error('[Passkey] MFA challenge error:', challenge.error);
+				throw challenge.error;
+			}
 			
 			const verify = await supabase.auth.mfa.verify({
 				factorId: data.id,
@@ -30,9 +44,13 @@ export const passkeyAuth = {
 				code: challenge.data.code // for webauthn, code is handled internally by supabase client
 			});
 			
+			if (verify.error) {
+				console.error('[Passkey] MFA verify error:', verify.error);
+			}
+
 			return { data: verify.data, error: verify.error };
 		} catch (error) {
-			console.error('Passkey enrollment failed:', error);
+			console.error('[Passkey] Passkey enrollment failed exception:', error);
 			return { data: null, error };
 		}
 	},
@@ -45,14 +63,21 @@ export const passkeyAuth = {
 	 */
 	signInWithPasskey: async (email) => {
 		try {
+			console.log('[Auth] Attempting signInWithWebAuthn for:', email, 'Target URL:', supabase.supabaseUrl);
 			// Passkey signin requires the email to find the associated factors
 			const { data, error } = await supabase.auth.signInWithWebAuthn({
 				email
 			});
 
+			if (error) {
+				console.warn('[Auth] signInWithWebAuthn returned error:', error);
+			} else {
+				console.log('[Auth] signInWithWebAuthn success:', data);
+			}
+
 			return { data, error };
 		} catch (error) {
-			console.error('Passkey sign-in failed:', error);
+			console.error('[Auth] Passkey sign-in caught exception:', error);
 			return { data: null, error };
 		}
 	},
@@ -65,20 +90,24 @@ export const passkeyAuth = {
 	 */
 	signUpWithPasskey: async (email) => {
 		try {
+			console.log('[Auth] Attempting signInWithOtp (signup fallback) for:', email, 'Target URL:', supabase.supabaseUrl);
 			// First, sign up the user (this will send an OTP/Magic link depending on settings)
 			// But since we want passwordless WebAuthn, we need a session first.
-			// Often, you might send an OTP, verify it, then enroll the passkey.
+			const { data, error: otpError } = await supabase.auth.signInWithOtp({ email });
 			
-			// Supabase currently requires the user to be signed in to ENROLL a passkey.
-			// 1. Sign in via OTP
-			const { error: otpError } = await supabase.auth.signInWithOtp({ email });
-			if (otpError) throw otpError;
+			if (otpError) {
+				console.error('[Auth] signInWithOtp returned error:', otpError);
+				throw otpError;
+			}
+
+			console.log('[Auth] signInWithOtp success response:', data);
 			
 			return { 
-				data: { message: 'OTP sent. Please verify OTP, then call enrollPasskey().' }, 
+				data: { message: 'OTP sent. Please verify OTP, then call enrollPasskey().', raw: data }, 
 				error: null 
 			};
 		} catch (error) {
+			console.error('[Auth] signUpWithPasskey caught exception:', error);
 			return { data: null, error };
 		}
 	}

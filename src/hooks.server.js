@@ -9,7 +9,7 @@ export const handle = async ({ event, resolve }) => {
 	 * The Supabase client gets the Auth token from the request cookies.
 	 */
 	const supabaseUrl = env.PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-	const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+	const supabaseAnonKey = env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
 	event.locals.supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
 		cookies: {
