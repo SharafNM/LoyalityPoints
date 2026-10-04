@@ -17,6 +17,7 @@
     "@vite-pwa/sveltekit": "^0.6.8",
     "autoprefixer": "^10.6.0",
     "postcss": "^8.5.28",
+    "supabase": "^2.119.0",
     "svelte": "^5.22.4",
     "tailwindcss": "^3.4.19",
     "vite": "^6.2.0",

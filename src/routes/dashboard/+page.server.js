@@ -37,3 +37,10 @@ export const load = async ({ locals }) => {
 		transactions: transactions || []
 	};
 };
+
+export const actions = {
+	signout: async ({ locals: { supabase } }) => {
+		await supabase.auth.signOut();
+		throw redirect(303, '/');
+	}
+};
