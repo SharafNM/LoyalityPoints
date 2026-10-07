@@ -58,8 +58,10 @@
 			error = result.error || 'Something went wrong. Please try again.';
 			loading = false;
 		} else {
-			// Session cookie set server-side — reload so the server redirects based on role
-			window.location.href = '/';
+			// Session cookie set server-side — navigate to the original target
+			// (if one was preserved via ?redirect=) or back to '/'.
+			const redirectTo = new URLSearchParams(window.location.search).get('redirect');
+			window.location.href = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/';
 		}
 	}
 

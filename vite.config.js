@@ -3,6 +3,10 @@ import { defineConfig } from 'vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
 export default defineConfig({
+	server: {
+		// Allow access through zrok share tunnels (e.g. *.share.zrok.io)
+		allowedHosts: ['.zrok.io']
+	},
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({

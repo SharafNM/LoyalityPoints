@@ -1,7 +1,15 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
+	let qrDataUrl = $state('');
+
+	onMount(async () => {
+		const QRCode = (await import('qrcode')).default;
+		const target = `${window.location.origin}/merchant/award?customer=${data.user.id}`;
+		QRCode.toDataURL(target, { width: 180, margin: 1 }).then((url) => (qrDataUrl = url));
+	});
 </script>
 
 <div class="max-w-3xl mx-auto p-4 space-y-6">
@@ -22,11 +30,15 @@
 
 	<section class="bg-blue-50 p-6 rounded-xl border border-blue-100 flex flex-col items-center">
 		<h2 class="text-lg font-semibold text-blue-900 mb-2">My Member QR Code</h2>
-		<!-- In a real app, use a QR code library like svelte-qrcode to render user.id -->
-		<div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 flex items-center justify-center rounded-lg">
-			<span class="text-gray-400 text-sm">QR Code: {data.user.id.split('-')[0]}...</span>
+		<div class="w-48 h-48 bg-white p-2 rounded-lg flex items-center justify-center">
+			{#if qrDataUrl}
+				<img src={qrDataUrl} alt="Member QR code" class="w-full h-full" />
+			{:else}
+				<span class="text-gray-400 text-sm">Loading…</span>
+			{/if}
 		</div>
 		<p class="text-xs text-center text-gray-500 mt-3">Show this code to merchants to claim points manually.</p>
+		<p class="text-xs text-gray-400 mt-2 font-mono break-all select-all">{data.user.id}</p>
 	</section>
 
 	<section>

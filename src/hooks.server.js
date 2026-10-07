@@ -50,7 +50,6 @@ export const handle = async ({ event, resolve }) => {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
 		if (!session) {
-			console.log('[safeGetSession] no session in cookies');
 			return { session: null, user: null };
 		}
 
@@ -59,11 +58,10 @@ export const handle = async ({ event, resolve }) => {
 			error
 		} = await event.locals.supabase.auth.getUser();
 		if (error) {
-			console.log('[safeGetSession] getUser() failed:', error.message);
+			// JWT validation has failed
 			return { session: null, user: null };
 		}
 
-		console.log('[safeGetSession] session found for', user.email);
 		return { session, user };
 	};
 

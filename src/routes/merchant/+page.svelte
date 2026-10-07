@@ -20,9 +20,9 @@
 			</div>
 			<h2 class="text-lg font-bold">Award Points</h2>
 			<p class="text-gray-500 text-sm mb-4">Scan a customer's QR code to manually add points.</p>
-			<button class="px-5 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition">
+			<a href="/merchant/award" class="px-5 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition">
 				Open Scanner
-			</button>
+			</a>
 		</div>
 		
 		<div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center text-center">
