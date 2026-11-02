@@ -4,8 +4,8 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
 export default defineConfig({
 	server: {
-		// Allow access through zrok share tunnels (e.g. *.share.zrok.io)
-		allowedHosts: ['.zrok.io']
+		// Allow access through tunnels (zrok shares, Cloudflare quick tunnels)
+		allowedHosts: ['.zrok.io', '.trycloudflare.com']
 	},
 	plugins: [
 		sveltekit(),

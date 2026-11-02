@@ -13,7 +13,7 @@ function _page($$renderer, $$props) {
     {
       $$renderer2.push(`<!--[-1--><span class="text-gray-400 text-sm">Loading…</span>`);
     }
-    $$renderer2.push(`<!--]--></div> <p class="text-xs text-center text-gray-500 mt-3">Show this code to merchants to claim points manually.</p></section> <section><h2 class="text-xl font-bold mb-4">Points Balance</h2> `);
+    $$renderer2.push(`<!--]--></div> <p class="text-xs text-center text-gray-500 mt-3">Show this code to merchants to claim points manually.</p> <p class="text-xs text-gray-400 mt-2 font-mono break-all select-all">${escape_html(data.user.id)}</p></section> <section><h2 class="text-xl font-bold mb-4">Points Balance</h2> `);
     if (data.balances.length === 0) {
       $$renderer2.push(`<!--[0--><p class="text-gray-500 italic">You don't have any points yet. Visit a local shop to start earning!</p>`);
     } else {
